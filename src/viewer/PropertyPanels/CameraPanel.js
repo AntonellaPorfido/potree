@@ -37,6 +37,10 @@ export class CameraPanel{
 					</td>
 				</tr>
 			</table>
+
+			<li style="margin-top: 10px">
+				<input name="copy_camera" type="button" value="copy camera position" style="width: 100%" />
+			</li>
 		</div>
 		`);
 
@@ -61,6 +65,23 @@ export class CameraPanel{
 					`Copied value to clipboard: <br>'${msg}'`,
 					{duration: 3000});
 		});
+
+		this.elCopyLink = this.elContent.find("input[name=copy_camera]");
+			this.elCopyLink.click( () => {
+				let camera_pos = this.viewer.scene.getActiveCamera().position.toArray();
+				let target = this.viewer.scene.view.getPivot().toArray();
+
+				let msg1 = camera_pos.map(c => c.toFixed(5)).join(",");
+				let msg2 = target.map(c => c.toFixed(5)).join(",");
+				
+				let msg = "[" + msg1 + "," + msg2 + "]";
+
+				Utils.clipboardCopy(msg);
+
+				this.viewer.postMessage(
+						`Copied value to clipboard: <br>'${msg}'`,
+						{duration: 3000});
+			});
 
 		this.propertiesPanel.addVolatileListener(viewer, "camera_changed", this._update);
 

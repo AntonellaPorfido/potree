@@ -88,6 +88,10 @@ export class VolumePanel extends MeasurePanel{
 					<div name="download_message"></div>
 				</li>
 
+				<li style="margin-top: 10px">
+					<input name="copy_volume" type="button" value="copy volume link" style="width: 100%" />
+				</li>
+
 
 				<!-- ACTIONS -->
 				<li style="display: grid; grid-template-columns: auto auto; grid-column-gap: 5px; margin-top: 10px">
@@ -133,6 +137,26 @@ export class VolumePanel extends MeasurePanel{
 					`Copied value to clipboard: <br>'${msg}'`,
 					{duration: 3000});
 		});
+
+
+		this.elCopyLink = this.elContent.find("input[name=copy_volume]");
+			this.elCopyLink.click( () => {
+				let scale = this.measurement.scale.toArray();
+				let rotation = this.measurement.rotation.toArray().slice(0, 3);
+				let position = this.measurement.position.toArray();
+				
+				let msg1 = position.map(c => c.toFixed(5)).join(",");
+				let msg2 = rotation.map(c => c.toFixed(5)).join(",");
+				let msg3 = scale.map(c => c.toFixed(5)).join(",");
+				
+				let msg = "[" + msg1 + "," + msg2 + "," + msg3 + "]" 
+
+				Utils.clipboardCopy(msg);
+
+				this.viewer.postMessage(
+						`Copied value to clipboard: <br>'${msg}'`,
+						{duration: 3000});
+			});
 
 		this.elRemove = this.elContent.find("img[name=remove]");
 		this.elRemove.click( () => {
