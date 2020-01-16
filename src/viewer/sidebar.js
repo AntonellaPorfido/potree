@@ -1197,7 +1197,12 @@ export class Sidebar{
 			let elInput = element.find('input');
 
 			elInput.click( () => {
-				// TODO
+				const classifications = this.viewer.classifications;
+	
+				for(let key of Object.keys(classifications)){
+					let value = classifications[key];
+					this.viewer.setClassificationVisibility(key, !value.visible);
+				}
 			});
 
 			elClassificationList.append(element);
@@ -1400,7 +1405,7 @@ export class Sidebar{
 			Potree.resourcePath + '/icons/fps_controls.svg',
 			'[title]tt.flight_control',
 			() => {
-				this.viewer.setControls(this.viewer.firstPersonControls);
+				this.viewer.setControls(this.viewer.fpControls);
 				this.viewer.fpControls.lockElevation = false;
 			}
 		));
@@ -1409,7 +1414,7 @@ export class Sidebar{
 			Potree.resourcePath + '/icons/helicopter_controls.svg',
 			'[title]tt.heli_control',
 			() => { 
-				this.viewer.setControls(this.viewer.firstPersonControls);
+				this.viewer.setControls(this.viewer.fpControls);
 				this.viewer.fpControls.lockElevation = true;
 			}
 		));
