@@ -1062,17 +1062,20 @@ export class Sidebar{
 
 			this.viewer.addEventListener("update", (e) => {
 				const extent = this.viewer.getGpsTimeExtent();
-
-				const rangeL0 = sldGpsL0.slider("option", "values");
-
-				const sliderInitialized = rangeL0[0] !== Infinity;
 				const gpsTimeAvailable = extent[0] !== Infinity;
-				
-				if(!sliderInitialized && gpsTimeAvailable){
-					initialize(extent);
-				}
 
-				sldGpsL0.slider({min: extent[0], max: extent[1]});
+				if(gpsTimeAvailable) { 
+					const rangeL0 = sldGpsL0.slider("option", "values");
+
+					const sliderInitialized = rangeL0[0] !== Infinity;
+
+					
+					if(!sliderInitialized){
+						initialize(extent);
+					}
+
+					sldGpsL0.slider({min: extent[0], max: extent[1]});
+				}
 
 				//updateLabels();
 			});
