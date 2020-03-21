@@ -18,7 +18,8 @@
 	<script src="../libs/jquery/jquery-3.1.1.min.js"></script>
 	<script src="../libs/spectrum/spectrum.js"></script>
 	<script src="../libs/jquery-ui/jquery-ui.min.js"></script>
-	<script src="../libs/three.js/build/three.js"></script>
+	<script src="../libs/three.js/build/three.min.js"></script>
+	<script src="../libs/three.js/extra/lines.js"></script>
 	<script src="../libs/other/BinaryHeap.js"></script>
 	<script src="../libs/tween/tween.min.js"></script>
 	<script src="../libs/d3/d3.js"></script>
@@ -28,18 +29,12 @@
 	<script src="../libs/jstree/jstree.js"></script>
 	<script src="../build/potree/potree.js"></script>
 	<script src="../libs/plasio/js/laslaz.js"></script>
-	<script src="../libs/other/stats.min.js"></script>
-
-	<script src='../libs/sql.js/sql-wasm.js'></script>
-	<script src='../libs/geopackage/geopackage.js'></script>
-	<script src="../libs/three.js/extra/lines/LineSegmentsGeometry.js"></script>
-	<script src="../libs/three.js/extra/lines/LineGeometry.js"></script>
-	<script src="../libs/three.js/extra/lines/LineMaterial.js"></script>
-	<script src="../libs/three.js/extra/lines/LineSegments2.js"></script>
-	<script src="../libs/three.js/extra/lines/Line2.js"></script>
-
+	
+	
 	<div class="potree_container" style="position: absolute; width: 100%; height: 100%; left: 0px; top: 0px; ">
-		<div id="potree_render_area"></div>
+		<div id="potree_render_area" style="background-image: url('../build/potree/resources/images/background.jpg');">
+		
+		</div>
 		<div id="potree_sidebar_container"> </div>
 	</div>
 	
@@ -47,71 +42,61 @@
 	
 		window.viewer = new Potree.Viewer(document.getElementById("potree_render_area"));
 		
-		viewer.setEDLEnabled(false);
-		//viewer.setFOV(62.94372232435855);
+		viewer.setEDLEnabled(true);
 		viewer.setFOV(60);
-		viewer.setPointBudget(3_000_000);
+		viewer.setPointBudget(2_000_000);
 		viewer.loadSettingsFromURL();
 		
 		viewer.loadGUI(() => {
 			viewer.setLanguage('en');
-			//$("#menu_tools").next().show();
-			//$("#menu_scene").next().show();
-			$("#menu_filters").next().show();
+			$("#menu_tools").next().show();
+			$("#menu_clipping").next().show();
 			viewer.toggleSidebar();
-
-			//testSvg();
 		});
 		
-		Potree.loadPointCloud("../pointclouds/gane/cloud.js", "gane", e => {
+		// Load and add point cloud to scene
+		Potree.loadPointCloud("./ALS/cloud.js", "ALS", e => {
 			let scene = viewer.scene;
 			let pointcloud = e.pointcloud;
 			
 			let material = pointcloud.material;
-			material.size = 1;
+			material.size = 0.5;
+			material.minSize = 2.0;
 			material.pointSizeType = Potree.PointSizeType.ADAPTIVE;
 			material.shape = Potree.PointShape.SQUARE;
-			material.activeAttributeName = "gps-time";
+			material.activeAttributeName = "rgba";
 			
 			scene.addPointCloud(pointcloud);
-			
-			scene.view.position.set(2561770.920, 1205268.256, 484.972);
-			scene.view.lookAt(2561766.055, 1205262.411, 480.754);
-			//viewer.fitToScreen();
+
+			viewer.scene.view.setView(
+				[2652375.180, 1248883.566, 398.382],
+				[2652375.143, 1248887.229, 396.943],
+			);
+
+			run();
 		});
+
+		async function run(){
+
+			proj4.defs("WGS84", "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs");
+			proj4.defs("pointcloud", viewer.getProjection());
+			let transform = proj4("WGS84", "pointcloud");
+
+			let params = {
+				transform: transform
+			};
+
+			let images = await Potree.Images360Loader.load("./Drive2", viewer, params);
+			
+			viewer.scene.add360Images(images);
+
+			viewer.mapView.showSources(false);
+		}
+
+
 		
 	</script>
-
-
-	<script>
-
-		// function testSvg(){
-
-		// 	const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-
-		// 	const svgNS = svg.namespaceURI;
-		// 	const rect = document.createElementNS(svgNS,'rect');
-
-		// 	// rect.setAttribute('x',5);
-		// 	// rect.setAttribute('y',5);
-		// 	rect.setAttribute('width', "100%");
-		// 	rect.setAttribute('height', "100%");
-		// 	rect.setAttribute('fill','#95B3D7');
-
-
-		// 	svg.appendChild(rect);
-
-		// 	svg.style.zIndex = 10000;
-		// 	svg.style.position = "absolute";
-
-		// 	const elFilters = document.getElementById("gpstime_multilevel_range_container");
-
-		// 	elFilters.appendChild(svg);
-
-		// }
-
-
-	</script>
 	
-</body>
+	
+  </body>
 </html>

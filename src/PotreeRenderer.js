@@ -134,7 +134,7 @@ function paramThreeToGL(_gl, p) {
 let attributeLocations = {
 	"position": {name: "position", location: 0},
 	"color": {name: "color", location: 1},
-	"RGBA": {name: "color", location: 1},
+	"rgba": {name: "color", location: 1},
 	"intensity": {name: "intensity", location: 2},
 	"classification": {name: "classification", location: 3},
 	"returnNumber": {name: "returnNumber", location: 4},
@@ -609,7 +609,6 @@ export class Renderer {
 		for(let attributeName in geometry.attributes){
 			let bufferAttribute = geometry.attributes[attributeName];
 
-			let attributeLocation = attributeLocations[attributeName].location;
 			let normalized = bufferAttribute.normalized;
 			let type = this.glTypeMapping.get(bufferAttribute.array.constructor);
 
@@ -632,8 +631,15 @@ export class Renderer {
 
 			gl.bindBuffer(gl.ARRAY_BUFFER, vbo);
 			gl.bufferData(gl.ARRAY_BUFFER, bufferAttribute.array, gl.STATIC_DRAW);
-			gl.vertexAttribPointer(attributeLocation, bufferAttribute.itemSize, type, normalized, 0, 0);
-			gl.enableVertexAttribArray(attributeLocation);
+
+			if(attributeLocations[attributeName] === undefined){
+				//attributeLocation = attributeLocations["aExtra"];
+			}else{
+				let attributeLocation = attributeLocations[attributeName].location;
+				
+				gl.vertexAttribPointer(attributeLocation, bufferAttribute.itemSize, type, normalized, 0, 0);
+				gl.enableVertexAttribArray(attributeLocation);
+			}
 		}
 
 		gl.bindBuffer(gl.ARRAY_BUFFER, null);
@@ -690,7 +696,6 @@ export class Renderer {
 				}
 			}
 
-
 			let world = node.sceneNode.matrixWorld;
 			worldView.multiplyMatrices(view, world);
 
@@ -708,13 +713,18 @@ export class Renderer {
 				shader.setUniform("uDebug", false);
 			}
 
-			let isLeaf;
-			if(node instanceof PointCloudOctreeNode){
-				isLeaf = Object.keys(node.children).length === 0;
-			}else if(node instanceof PointCloudArena4DNode){
-				isLeaf = node.geometryNode.isLeaf;
-			}
-			shader.setUniform("uIsLeafNode", isLeaf);
+			// let isLeaf = false;
+			// if(node instanceof PointCloudOctreeNode){
+			// 	isLeaf = Object.keys(node.children).length === 0;
+			// }else if(node instanceof PointCloudArena4DNode){
+			// 	isLeaf = node.geometryNode.isLeaf;
+			// }
+			// shader.setUniform("uIsLeafNode", isLeaf);
+
+			// let isLeaf = node.children.filter(n => n != null).length === 0;
+			// if(!isLeaf){
+			// 	continue;
+			// }
 
 
 			// TODO consider passing matrices in an array to avoid uniformMatrix4fv overhead
@@ -824,40 +834,68 @@ export class Renderer {
 			if(geometry.attributes["gps-time"]){
 				const bufferAttribute = geometry.attributes["gps-time"];
 				const attGPS = octree.getAttribute("gps-time");
-				//const attGPS = octree.pcoGeometry.pointAttributes.attributes.find(a => a.name === "gps-time");
 
-				// ranges in full gps coordinate system
-				const globalRange = attGPS.range;
-				const bufferRange = bufferAttribute.potree.range;
+				let initialRange = attGPS.initialRange;
+				let initialRangeSize = initialRange[1] - initialRange[0];
 
-				// ranges in [0, 1]
-				// normalizedGlobalRange = [0, 1]
-				// normalizedBufferRange: norm buffer within norm global range e.g. [0.2, 0.8]
-				const globalWidth = globalRange[1] - globalRange[0];
-				const normalizedBufferRange = [
-					(bufferRange[0] - globalRange[0]) / globalWidth,
-					(bufferRange[1] - globalRange[0]) / globalWidth,
-				];
+				let globalRange = attGPS.range;
+				let globalRangeSize = globalRange[1] - globalRange[0];
 
-				shader.setUniform2f("uNormalizedGpsBufferRange", normalizedBufferRange);
+				let scale = initialRangeSize / globalRangeSize;
+				let offset = -(globalRange[0] - initialRange[0]) / initialRangeSize;
+
+				shader.setUniform1f("uGpsScale", scale);
+				shader.setUniform1f("uGpsOffset", offset);
+				//shader.setUniform2f("uFilterGPSTimeClipRange", [-Infinity, Infinity]);
 
 				let uFilterGPSTimeClipRange = material.uniforms.uFilterGPSTimeClipRange.value;
-				let gpsCliPRangeMin = uFilterGPSTimeClipRange[0]
-				let gpsCliPRangeMax = uFilterGPSTimeClipRange[1]
-				shader.setUniform2f("uFilterGPSTimeClipRange", [gpsCliPRangeMin, gpsCliPRangeMax]);
+				// let gpsCliPRangeMin = uFilterGPSTimeClipRange[0]
+				// let gpsCliPRangeMax = uFilterGPSTimeClipRange[1]
+				// shader.setUniform2f("uFilterGPSTimeClipRange", [gpsCliPRangeMin, gpsCliPRangeMax]);
 
-				shader.setUniform1f("uGpsScale", bufferAttribute.potree.scale);
-				shader.setUniform1f("uGpsOffset", bufferAttribute.potree.offset);
+				let normalizedClipRange = [
+					(uFilterGPSTimeClipRange[0] - globalRange[0]) / globalRangeSize,
+					(uFilterGPSTimeClipRange[1] - globalRange[0]) / globalRangeSize,
+				];
+
+				shader.setUniform2f("uFilterGPSTimeClipRange", normalizedClipRange);
+
+
+
+				// // ranges in full gps coordinate system
+				// const globalRange = attGPS.range;
+				// const bufferRange = bufferAttribute.potree.range;
+
+				// // ranges in [0, 1]
+				// // normalizedGlobalRange = [0, 1]
+				// // normalizedBufferRange: norm buffer within norm global range e.g. [0.2, 0.8]
+				// const globalWidth = globalRange[1] - globalRange[0];
+				// const normalizedBufferRange = [
+				// 	(bufferRange[0] - globalRange[0]) / globalWidth,
+				// 	(bufferRange[1] - globalRange[0]) / globalWidth,
+				// ];
+
+				// shader.setUniform2f("uNormalizedGpsBufferRange", normalizedBufferRange);
+
+				// let uFilterGPSTimeClipRange = material.uniforms.uFilterGPSTimeClipRange.value;
+				// let gpsCliPRangeMin = uFilterGPSTimeClipRange[0]
+				// let gpsCliPRangeMax = uFilterGPSTimeClipRange[1]
+				// shader.setUniform2f("uFilterGPSTimeClipRange", [gpsCliPRangeMin, gpsCliPRangeMax]);
+
+				// shader.setUniform1f("uGpsScale", bufferAttribute.potree.scale);
+				// shader.setUniform1f("uGpsOffset", bufferAttribute.potree.offset);
 			}
 
 			{
 				let uFilterReturnNumberRange = material.uniforms.uFilterReturnNumberRange.value;
 				let uFilterNumberOfReturnsRange = material.uniforms.uFilterNumberOfReturnsRange.value;
+				let uFilterPointSourceIDClipRange = material.uniforms.uFilterPointSourceIDClipRange.value;
 				
 				
 				
 				shader.setUniform2f("uFilterReturnNumberRange", uFilterReturnNumberRange);
 				shader.setUniform2f("uFilterNumberOfReturnsRange", uFilterNumberOfReturnsRange);
+				shader.setUniform2f("uFilterPointSourceIDClipRange", uFilterPointSourceIDClipRange);
 			}
 
 			let webglBuffer = null;
@@ -910,44 +948,30 @@ export class Renderer {
 
 
 				{
-
 					const attExtra = octree.pcoGeometry.pointAttributes.attributes
 						.find(a => a.name === attName);
 
-					const offset = bufferAttribute.potree.offset;
-					const scale = bufferAttribute.potree.scale;
-
-					// ranges in full gps coordinate system
-					const globalRange = attExtra.range;
-					const bufferRange = bufferAttribute.potree.range;
-
-					const globalWidth = globalRange[1] - globalRange[0];
-					const normalizedBufferRange = [
-						(bufferRange[0] - globalRange[0]) / globalWidth,
-						(bufferRange[1] - globalRange[0]) / globalWidth,
-					];
-
-					shader.setUniform2f("uExtraNormalizedRange", normalizedBufferRange);
-					
-					if(offset === 0 && scale === 1){
-						shader.setUniform2f("uExtraRange", material.extraRange);
-					}else{
-						const extraRange = [
-							(material.extraRange[0] - globalRange[0]) / globalWidth,
-							(material.extraRange[1] - globalRange[0]) / globalWidth,
-						];
-						shader.setUniform2f("uExtraRange", extraRange);
+					let range = material.getRange(attName);
+					if(!range){
+						range = attExtra.range;
 					}
 
-					
+					if(!range){
+						range = [0, 1];
+					}
+
+					let initialRange = attExtra.initialRange;
+					let initialRangeSize = initialRange[1] - initialRange[0];
+
+					let globalRange = range;
+					let globalRangeSize = globalRange[1] - globalRange[0];
+
+					let scale = initialRangeSize / globalRangeSize;
+					let offset = -(globalRange[0] - initialRange[0]) / initialRangeSize;
+
+					shader.setUniform1f("uExtraScale", scale);
+					shader.setUniform1f("uExtraOffset", offset);					
 				}
-
-
-
-
-
-
-
 
 			}else{
 
@@ -1051,12 +1075,16 @@ export class Renderer {
 						defines.push("#define clip_gps_enabled");
 					}
 
-					if(attributes.returnNumber){
+					if(attributes["return number"]){
 						defines.push("#define clip_return_number_enabled");
 					}
 
-					if(attributes.numberOfReturns){
+					if(attributes["number of returns"]){
 						defines.push("#define clip_number_of_returns_enabled");
+					}
+
+					if(attributes["source id"]){
+						defines.push("#define clip_point_source_id_enabled");
 					}
 
 				}
@@ -1265,10 +1293,12 @@ export class Renderer {
 			shader.setUniform("backfaceCulling", material.uniforms.backfaceCulling.value);
 
 			let vnWebGLTexture = this.textures.get(material.visibleNodesTexture);
-			shader.setUniform1i("visibleNodesTexture", currentTextureBindingPoint);
-			gl.activeTexture(gl.TEXTURE0 + currentTextureBindingPoint);
-			gl.bindTexture(vnWebGLTexture.target, vnWebGLTexture.id);
-			currentTextureBindingPoint++;
+			if(vnWebGLTexture){
+				shader.setUniform1i("visibleNodesTexture", currentTextureBindingPoint);
+				gl.activeTexture(gl.TEXTURE0 + currentTextureBindingPoint);
+				gl.bindTexture(vnWebGLTexture.target, vnWebGLTexture.id);
+				currentTextureBindingPoint++;
+			}
 
 			let gradientTexture = this.textures.get(material.gradientTexture);
 			shader.setUniform1i("gradient", currentTextureBindingPoint);
