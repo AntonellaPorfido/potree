@@ -71,12 +71,41 @@
 		"length_unit": "Length unit",
 		"freeze": "Lock view",
 		"language": "Language",
-		"backface_culling": "Backface Culling"
+		"backface_culling": "Backface Culling",
+		 "eyeDomeLighting" :"Eye-Dome-Lighting",
+	    "background":"Background",
+	    "gradient":"Gradient",
+	     "black":"Black",
+	     "white":"White",
+	     "none":"None"
 	},
+	"other":{
+	   "other":"Other",
+       "high_quality":"High Quality",
+	   "splat_quality_options":"Splat Quality"
+  },
 	"measurements": {
 		"clip": "clip",
-		"show": "show volume"
-	},
+		"show": "show volume",
+		"measurement":"Measurement",
+		 "show_label":"Show",
+	    "hide":"Hide",
+		"none":"None",
+	    "highlight":"Highlight",
+	    "inside":"Inside",
+	    "outside":"Outside",
+		"inside_any":"Inside any",
+	    "inside_all":"Inside all",
+		"labels_show_hide":"Show/Hide labels",
+		"camera_projection":"Camera Projection",
+		 "perspective":"Perspective",
+	     "orthographic":"Orthographic",
+		  "clip_method":"Clip Method"
+   },
+   "navigation":{
+	   "navigation":"Navigation"
+   },
+	
 	"annotations": {
 		"show3D": "show in 3D",
 		"showMap": "show on map"
@@ -89,8 +118,38 @@
 	},
 	"scene": {
 		"camera_position": "Camera Position",
-		"camera_target": "Camera Target"
+		"camera_target": "Camera Target",
+		 "objects":"Objects",
+	     "properties":"Properties",
+		 "point_clouds":"Point Clouds",
+	     "measurements":"Measurements",
+	     "annotations":"Annotations",
+	     "other":"Other",
+	     "vectors":"Vectors",
+	     "images":"Images"
 	},
+	"classification":{
+      "classification":"Classification",
+	  "return":"Return",
+	  "point_Source_ID":"Point Source ID",
+	  "GPS_Time":"GPS Time",
+	  "time":"Time:",
+	  "show_hide_all":"show/hide all",
+	  "find":"find",
+	  "never":"never classified",
+	  "unclassified":"unclassified",
+	  "ground":"ground",
+	  "low_vegetation":"low vegetation",
+	  "medium_vegetation":"medium vegetation",
+	  "high_vegetation":"high vegetation",
+	  "building":"building",
+	  "low_point(noise)":"low point(noise)",
+	  "key-point":"key-point",
+	  "water":"water",
+	  "overlap":"overlap",
+	  "default":"default",
+	  "invert":"invert"
+    },
 	"filters": {
 		"return_number": "Return Number",
 		"number_of_returns": "Number of Returns",
@@ -100,5 +159,13 @@
 	},
 	"settings": {
 		"language": "Language"
-	}
+	},
+	"abount":{
+      "potree":"is a viewer for large point cloud / LIDAR data sets, developed at the Vienna University of Technology. ",
+      "Author":"Author:",
+	  "License": "License:",
+	  "Libraries":"Libraries:",
+	  "Donators":"Donators:",
+	  "Credits":"Credits:"
+   }	
 }

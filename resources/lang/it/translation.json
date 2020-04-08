@@ -71,12 +71,41 @@
       "length_unit":"Unità di lunghezza",
       "freeze":"Blocca vista",
       "language":"Lingua",
-      "backface_culling":"Backface Culling"
+      "backface_culling":"Backface Culling",
+	  "eyeDomeLighting" :"Illuminazione",
+	  "background":"Sfondo",
+	  "gradient":"Gradiente",
+	   "black":"Nero",
+	   "white":"Bianco",
+	   "none":"Nessuno"
    },
+  "other":{
+	   "other":"Altro",
+       "high_quality":"Alta Qualità",
+	  "splat_quality_options":"Qualità Splat"
+  },
    "measurements":{
       "clip":"clip",
-      "show":"mostra volume"
+      "show":"mostra volume",
+	  "measurement":"Misurazioni",
+	  "show_label":"Mostra",
+	  "hide":"Nascondi",
+	  "none":"Nessuno",
+	  "highlight":"Evidenziato",
+	  "inside":"Interno",
+	  "outside":"Esterno",
+	  "inside_any":"Dentro ogni",
+	  "inside_all":"Dentro tutti",
+	  "labels_show_hide":"Mostra/Nascondi etichette",
+	  "camera_projection":"Proiezione della fotocamera",
+	  "perspective":"Prospettiva",
+	  "orthographic":"Ortografica",
+	  "clip_method":"Metodo Clip"
+
    },
+   "navigation":{
+	   "navigation":"Navigazione"
+   }, 
    "annotations":{
       "show3D":"mostra in 3D",
       "showMap":"mostra su mappa"
@@ -89,7 +118,37 @@
    },
    "scene":{
       "camera_position":"Posizione camera",
-      "camera_target":"Obiettivo camera"
+      "camera_target":"Obiettivo camera",
+	  "objects":"Oggetti",
+	  "properties":"Proprietà",
+	  "point_clouds":"Nuvole di punti",
+	  "measurements":"Misure",
+	  "annotations":"Annotazioni",
+	  "other":"Altro",
+	  "vectors":"Vettori",
+	  "images":"Immagini"
+   },
+   "classification":{
+      "classification":"Classificazione",
+	  "return":"Risultato",
+	  "point_Source_ID":"Identificatore del punto ID",
+	  "GPS_Time":"GPS Tempo",
+	  "time":"Tempo:",
+	  "show_hide_all":"Mostra/Nascondi tutti",
+	  "find":"trova",
+	  "never":"nessuna classificazione",
+	  "unclassified":"non classificato",
+	  "ground":"terra",
+	  "low_vegetation":"bassa vegetazione",
+	  "medium_vegetation":"vegetazione media",
+	  "high_vegetation":"alta vegetazione",
+	  "building":"edificio",
+	  "low_point(noise)":"punto basso (rumore)",
+	  "key-point":"punto chiave",
+	  "water":"acqua",
+	  "overlap":"sovrapposizione",
+	  "default":"predefinito",
+	  "invert":"inverti"
    },
    "filters":{
       "return_number":"Numero di ritorno",
@@ -100,5 +159,13 @@
    },
    "settings":{
       "language":"Lingua"
+   },
+   "abount":{
+      "potree":"è un visualizzatore di grandi set di dati nuvola di punti / LIDAR, sviluppati presso l'Università della Tecnologia di Vienna.",
+	  "Author":"Autore:",
+	  "License": "Licenza:",
+	  "Libraries":"Librerie:",
+	  "Donators":"Donatori:",
+	  "Credits":"Titoli di coda:"
    }
 }

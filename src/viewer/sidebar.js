@@ -277,7 +277,7 @@ export class Sidebar{
 
 		{ // SHOW / HIDE Measurements
 			let elShow = $("#measurement_options_show");
-			elShow.selectgroup({title: "Show/Hide labels"});
+			elShow.selectgroup({title: "<span data-i18n='measurements.labels_show_hide'></span>"});
 
 			elShow.find("input").click( (e) => {
 				const show = e.target.value === "SHOW";
@@ -396,12 +396,12 @@ export class Sidebar{
 			return nodeID;
 		}
 
-		let pcID = tree.jstree('create_node', "#", { "text": "<b>Point Clouds</b>", "id": "pointclouds"}, "last", false, false);
-		let measurementID = tree.jstree('create_node', "#", { "text": "<b>Measurements</b>", "id": "measurements" }, "last", false, false);
-		let annotationsID = tree.jstree('create_node', "#", { "text": "<b>Annotations</b>", "id": "annotations" }, "last", false, false);
-		let otherID = tree.jstree('create_node', "#", { "text": "<b>Other</b>", "id": "other" }, "last", false, false);
-		let vectorsID = tree.jstree('create_node', "#", { "text": "<b>Vectors</b>", "id": "vectors" }, "last", false, false);
-		let imagesID = tree.jstree('create_node', "#", { "text": "<b> Images</b>", "id": "images" }, "last", false, false);
+		let pcID = tree.jstree('create_node', "#", { "text": "<b><span data-i18n='scene.point_clouds'></span></b>", "id": "pointclouds"}, "last", false, false);
+		let measurementID = tree.jstree('create_node', "#", { "text": "<b><span data-i18n='scene.measurements'></span></b>", "id": "measurements" }, "last", false, false);
+		let annotationsID = tree.jstree('create_node', "#", { "text": "<b><span data-i18n='scene.annotations'></span></b>", "id": "annotations" }, "last", false, false);
+		let otherID = tree.jstree('create_node', "#", { "text": "<b><span data-i18n='scene.other'></span></b>", "id": "other" }, "last", false, false);
+		let vectorsID = tree.jstree('create_node', "#", { "text": "<b><span data-i18n='scene.vectors'></span></b>", "id": "vectors" }, "last", false, false);
+		let imagesID = tree.jstree('create_node', "#", { "text": "<b><span data-i18n='scene.images'></span></b>", "id": "images" }, "last", false, false);
 
 		tree.jstree("check_node", pcID);
 		tree.jstree("check_node", measurementID);
@@ -776,7 +776,7 @@ export class Sidebar{
 
 		{
 			let elClipMethod = $("#clipmethod_options");
-			elClipMethod.selectgroup({title: "Clip Method"});
+			elClipMethod.selectgroup({title: "<span data-i18n='measurements.clip_method'></span>"});
 
 			elClipMethod.find("input").click( (e) => {
 				this.viewer.setClipMethod(ClipMethod[e.target.value]);
@@ -1114,7 +1114,7 @@ export class Sidebar{
 				<li>
 					<label style="whitespace: nowrap">
 						<input id="toggleClassificationFilters" type="checkbox" checked/>
-						<span>show/hide all</span>
+						<span data-i18n="classification.show_hide_all"></span>
 					</label>
 				</li>
 			`);
@@ -1131,7 +1131,7 @@ export class Sidebar{
 		const addInvertButton = () => { 
 			const element = $(`
 				<li>
-					<input type="button" value="invert" />
+					<input type="button" value="invert"/>
 				</li>
 			`);
 
@@ -1445,12 +1445,12 @@ export class Sidebar{
 
 		let elCameraProjection = $(`
 			<selectgroup id="camera_projection_options">
-				<option id="camera_projection_options_perspective" value="PERSPECTIVE">Perspective</option>
-				<option id="camera_projection_options_orthigraphic" value="ORTHOGRAPHIC">Orthographic</option>
+				<option id="camera_projection_options_perspective" value="PERSPECTIVE"><span data-i18n="measurements.perspective"></span></option>
+				<option id="camera_projection_options_orthigraphic" value="ORTHOGRAPHIC"><span data-i18n="measurements.orthographic"></span></option>
 			</selectgroup>
 		`);
 		elNavigation.append(elCameraProjection);
-		elCameraProjection.selectgroup({title: "Camera Projection"});
+		elCameraProjection.selectgroup({title: "<span data-i18n='measurements.camera_projection'></span>"});
 		elCameraProjection.find("input").click( (e) => {
 			this.viewer.setCameraMode(CameraMode[e.target.value]);
 		});
@@ -1505,7 +1505,7 @@ export class Sidebar{
 
 		{
 			let elSplatQuality = $("#splat_quality_options");
-			elSplatQuality.selectgroup({title: "Splat Quality"});
+			elSplatQuality.selectgroup({title: "<span data-i18n='other.splat_quality_options'></span>"});
 
 			elSplatQuality.find("input").click( (e) => {
 				if(e.target.value === "standard"){
